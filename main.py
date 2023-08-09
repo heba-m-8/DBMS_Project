@@ -5,6 +5,44 @@ import hashlib
 data = pd.read_csv('password_file.csv')
 
 
+def check_permission(user_id):
+
+    user_role_data = data.loc[
+        data['workID'] == int(user_id), 'role']
+
+    user_role = user_role_data.values[0]
+    print("Role:", user_role)
+
+    if user_role == 'Project Manager':
+        print("Full access granted for project manager, here is the database:\n")
+        print(data)
+
+        answer = input("Do you want to change the salary? (yes/no)\n")
+        if answer == 'yes':
+            emp_id = input("Enter the employee ID:\n")
+            new_sal = input("Enter the new salary:\n")
+            edit_table(emp_id, new_sal)
+
+    elif user_role == 'Supervisor':
+        print("Access granted for supervisor, you can view the employees' names and emails.\n")
+        columns_to_view = ['first_name', 'last_name', 'email']
+        selected_data = data[columns_to_view]
+        print(selected_data)
+
+    else:
+        print("You have no access.\n")
+
+
+def edit_table(emp_id, new_sal):
+
+    employee_id_from_table = data.loc[
+        data['workID'] == int(emp_id)].index[0]
+
+    # Update the salary for the corresponding employee
+    data.at[employee_id_from_table, 'salary'] = new_sal
+    print("Salary updated successfully.")
+
+
 def hashing(password):
     hashed = hashlib.sha256(password.encode()).hexdigest()
     return hashed
@@ -18,7 +56,8 @@ def register():
 
         if pwd == confirm_pwd:
             hashed_password = hashing(pwd)
-            data.loc[data['workID'] == int(employee_id), 'password'] = hashed_password   # locating ID to add hashed password
+            data.loc[
+                data['workID'] == int(employee_id), 'password'] = hashed_password  # locating ID to add hashed password
             print("You have successfully registered. \n")
             break
         else:
@@ -35,6 +74,8 @@ def login():
         stored_hashed_password = data.loc[data['workID'] == int(employee_id), 'password'].values[0]
         if hashed_password == stored_hashed_password:
             print("Login successful. \n")
+            # employee_row = data[data['workID'] == employee_id]
+            check_permission(employee_id)
         else:
             print("Incorrect password. \n")
     else:
