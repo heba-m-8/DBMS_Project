@@ -17,11 +17,12 @@ def check_permission(user_id):
         print("Full access granted for project manager, here is the database:\n")
         print(data)
 
-        answer = input("Do you want to change the salary? (yes/no)\n")
+        answer = input("Do you want to change any employee's salary? (yes/no)\n")
         if answer == 'yes':
             emp_id = input("Enter the employee ID:\n")
             new_sal = input("Enter the new salary:\n")
             edit_table(emp_id, new_sal)
+            data.to_csv('password_file.csv', index=False)
 
     elif user_role == 'Supervisor':
         print("Access granted for supervisor, you can view the employees' names and emails.\n")
@@ -57,7 +58,7 @@ def register():
         if pwd == confirm_pwd:
             hashed_password = hashing(pwd)
             data.loc[
-                data['workID'] == int(employee_id), 'password'] = hashed_password  # locating ID to add hashed password
+                data['workID'] == int(employee_id), 'password'] = hashed_password
             print("You have successfully registered. \n")
             break
         else:
