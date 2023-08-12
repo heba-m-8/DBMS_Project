@@ -1,3 +1,7 @@
+# Heba Marei - 20200400
+# Taya Jarrar - 20200813
+# Lina Matar - 20200277
+
 import pandas as pd
 import hashlib
 
@@ -19,10 +23,16 @@ def check_permission(user_id):
 
         answer = input("Do you want to change any employee's salary? (yes/no)\n")
         if answer == 'yes':
-            emp_id = input("Enter the employee ID:\n")
-            new_sal = input("Enter the new salary:\n")
-            edit_table(emp_id, new_sal)
-            data.to_csv('password_file.csv', index=False)
+            while True:
+                emp_id = input("Enter the employee ID:\n")
+                if int(emp_id) not in data['workID']:
+                    print(emp_id, 'is not a valid employee ID. \n')
+                    continue
+
+                new_sal = input("Enter the new salary:\n")
+                edit_table(emp_id, new_sal)
+                data.to_csv('password_file.csv', index=False)
+                break
 
     elif user_role == 'Supervisor':
         print("Access granted for supervisor, you can view the employees' names and emails.\n")
@@ -52,13 +62,22 @@ def hashing(password):
 def register():
     while True:
         employee_id = input("Enter your employee ID to register: \n")
+
+        if int(employee_id) not in data['workID']:
+            print(employee_id, 'is not a valid employee ID. \n')
+            continue
+
+        if data.loc[data['workID'] == int(employee_id), 'password'].notna().values[0]:
+            print(employee_id, 'is already registered. \n')
+            continue
+
         pwd = input("Enter a password: \n")
         confirm_pwd = input("Confirm your password: \n")
 
         if pwd == confirm_pwd:
             hashed_password = hashing(pwd)
             data.loc[
-                data['workID'] == int(employee_id), 'password'] = hashed_password
+                data['workID'] == int(employee_id), 'password'] = hashed_password  # locating ID to add hashed password
             print("You have successfully registered. \n")
             break
         else:
@@ -66,30 +85,35 @@ def register():
 
 
 def login():
-    employee_id = input("Enter your employee ID to log in: \n")
-    pwd = input("Enter your password: \n")
+    while True:
+        employee_id = input("Enter your employee ID to log in: \n")
 
-    hashed_password = hashing(pwd)
+        if int(employee_id) not in data['workID'].values:
+            print(employee_id, 'is not a valid employee ID.\n')
+            continue
 
-    if employee_id in data['workID'].astype(str).values:
+        pwd = input("Enter your password: \n")
+        hashed_password = hashing(pwd)
+
         stored_hashed_password = data.loc[data['workID'] == int(employee_id), 'password'].values[0]
         if hashed_password == stored_hashed_password:
             print("Login successful. \n")
-            # employee_row = data[data['workID'] == employee_id]
             check_permission(employee_id)
+            break
         else:
             print("Incorrect password. \n")
+
+
+while True:
+    choice = input("Welcome! Enter L for login, and R for registration. \n")
+    if choice == 'L':
+        login()
+        break
+
+    elif choice == 'R':
+        register()
+        # save updated data:
+        data.to_csv('password_file.csv', index=False)
+        break
     else:
-        print("Employee ID not found. \n")
-
-
-choice = input("Welcome! Enter A for login, and B for registration. \n")
-
-if choice == 'A':
-    login()
-elif choice == 'B':
-    register()
-    # save updated data:
-    data.to_csv('password_file.csv', index=False)
-else:
-    print("Invalid choice.\n")
+        print("Invalid choice.\n")
