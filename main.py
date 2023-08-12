@@ -25,7 +25,7 @@ def check_permission(user_id):
         if answer == 'yes':
             while True:
                 emp_id = input("Enter the employee ID:\n")
-                if int(emp_id) not in data['workID']:
+                if int(emp_id) not in data['workID'].values:
                     print(emp_id, 'is not a valid employee ID. \n')
                     continue
 
@@ -63,7 +63,7 @@ def register():
     while True:
         employee_id = input("Enter your employee ID to register: \n")
 
-        if int(employee_id) not in data['workID']:
+        if int(employee_id) not in data['workID'].values:
             print(employee_id, 'is not a valid employee ID. \n')
             continue
 
