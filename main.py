@@ -29,7 +29,7 @@ def check_permission(user_id):
                     continue
 
                 new_sal = input("Enter the new salary:\n")
-                edit_table_salary(emp_id, new_sal)
+                edit_salary(emp_id, new_sal)
                 data.to_csv('password_file.csv', index=False)
                 break
 
@@ -42,7 +42,7 @@ def check_permission(user_id):
                     continue
 
                 new_role = input("Enter the new role:\n")
-                edit_table_role(emp_id, new_role)
+                edit_role(emp_id, new_role)
                 data.to_csv('password_file.csv', index=False)
                 break
 
@@ -56,7 +56,7 @@ def check_permission(user_id):
         print("You have no access.\n")
 
 
-def edit_table_salary(emp_id, new_sal):
+def edit_salary(emp_id, new_sal):
 
     employee_id_from_table = data.loc[
         data['workID'] == int(emp_id)].index[0]
@@ -66,7 +66,7 @@ def edit_table_salary(emp_id, new_sal):
     print("Salary updated successfully.")
 
 
-def edit_table_role(emp_id, new_role):
+def edit_role(emp_id, new_role):
     employee_id_from_table = data.loc[
         data['workID'] == int(emp_id)].index[0]
 
