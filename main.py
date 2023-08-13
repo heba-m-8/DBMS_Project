@@ -18,10 +18,9 @@ def check_permission(user_id):
     print("Role:", user_role)
 
     if user_role == 'Project Manager':
-        print("Full access granted for project manager, here is the database:\n")
+        print("Full access granted for project manager, here is the database: \n")
         print(data)
-
-        answer = input("Do you want to change any employee's salary? (yes/no)\n")
+        answer = input("Do you want to change any employee's salary? (yes/no) \n")
         if answer == 'yes':
             while True:
                 emp_id = input("Enter the employee ID:\n")
@@ -30,7 +29,20 @@ def check_permission(user_id):
                     continue
 
                 new_sal = input("Enter the new salary:\n")
-                edit_table(emp_id, new_sal)
+                edit_table_salary(emp_id, new_sal)
+                data.to_csv('password_file.csv', index=False)
+                break
+
+        answer2 = input("Do you want to upgrade any employee's role? (yes/no) \n")
+        if answer2 == 'yes':
+            while True:
+                emp_id = input("Enter the employee ID:\n")
+                if int(emp_id) not in data['workID'].values:
+                    print(emp_id, 'is not a valid employee ID. \n')
+                    continue
+
+                new_role = input("Enter the new role:\n")
+                edit_table_role(emp_id, new_role)
                 data.to_csv('password_file.csv', index=False)
                 break
 
@@ -44,7 +56,7 @@ def check_permission(user_id):
         print("You have no access.\n")
 
 
-def edit_table(emp_id, new_sal):
+def edit_table_salary(emp_id, new_sal):
 
     employee_id_from_table = data.loc[
         data['workID'] == int(emp_id)].index[0]
@@ -52,6 +64,15 @@ def edit_table(emp_id, new_sal):
     # Update the salary for the corresponding employee
     data.at[employee_id_from_table, 'salary'] = new_sal
     print("Salary updated successfully.")
+
+
+def edit_table_role(emp_id, new_role):
+    employee_id_from_table = data.loc[
+        data['workID'] == int(emp_id)].index[0]
+
+    # Update the role for the corresponding employee
+    data.at[employee_id_from_table, 'role'] = new_role
+    print("Role updated successfully.")
 
 
 def hashing(password):
